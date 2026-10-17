@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="id">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIVORY</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&family=Instrument+Serif:ital@1&family=Syne:wght@600;700;800&display=swap">
+<style>
+/* Black and white only, from the AIVORY wordmark. Flow: logo appears and leaves, a drifting wall of
+   designs (not clickable), then a pick-a-category list. Picking one opens that category's work
+   with a reveal that grows out of the row. */
+:root {
+  --ink: #0A0A0A; --paper: #FFFFFF; --g1: #8C8C8C; --g2: #DADADA; --dim: #5A5A5A;
+  --d: "Syne", "Helvetica Neue", Arial, sans-serif;
+  --f: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --s: "Instrument Serif", Georgia, serif;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--ink); color: var(--paper); font: 400 18px/1.5 var(--f); letter-spacing: .01em; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 6px; }
+.in { max-width: 1160px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.mono { font: 500 13px/1 var(--f); letter-spacing: .14em; text-transform: uppercase; }
+.stripe { background: repeating-linear-gradient(to bottom, currentColor 0 .085em, transparent .085em .145em); -webkit-background-clip: text; background-clip: text; color: transparent; }
+em { font-family: var(--s); font-style: italic; font-weight: 400; }
+
+/* ---------- opening: logo appears, then leaves ---------- */
+.hook { position: fixed; inset: 0; z-index: 300; background: #000; color: #fff; display: grid; place-items: center; clip-path: inset(0); animation: hookOut 1s var(--ease) 2.3s forwards; }
+.hook__w { position: relative; font: 800 clamp(56px, 17vw, 240px)/1.1 var(--d); letter-spacing: .02em; white-space: nowrap; animation: logoOut .6s var(--ease) 1.9s forwards; }
+.hook__w::after { content: attr(data-t); position: absolute; left: 0; top: 0; color: #fff; clip-path: inset(0 100% 0 0); animation: wipe 1s var(--ease) 1s forwards; }
+.hook__w > span { display: inline-block; clip-path: inset(0 100% 0 0); animation: wipe 1.1s var(--ease) .25s forwards; }
+.hook__tag { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); bottom: 22px; display: flex; justify-content: space-between; opacity: 0; animation: fadeIn .6s .6s forwards, fadeOut .4s 1.9s forwards; }
+@keyframes hookOut { to { clip-path: inset(0 0 100% 0); visibility: hidden; } }
+@keyframes wipe { to { clip-path: inset(0); } }
+@keyframes logoOut { to { opacity: 0; transform: scale(1.08); } }
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes fadeOut { to { opacity: 0; } }
+
+/* ---------- nav ---------- */
+.nav { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 0; right: 0; z-index: 260; mix-blend-mode: difference; color: #fff; pointer-events: none; }
+.nav .in { max-width: 1400px; display: flex; justify-content: space-between; align-items: center; }
+.logo { pointer-events: auto; font: 800 22px/1 var(--d); letter-spacing: .02em; text-decoration: none; }
+
+/* ---------- nav links ---------- */
+.links { pointer-events: auto; display: flex; gap: clamp(18px, 3vw, 40px); }
+.links a { font: 400 17px/1 var(--f); letter-spacing: .01em; text-decoration: none; position: relative; padding-block: 6px; }
+.links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
+.links a:hover::after, .links a:focus-visible::after { transform: scaleX(1); }
+@media (max-width: 520px) { .links { gap: 16px; } .links a { font-size: 15px; } }
+
+/* ---------- design wall (decor only) ---------- */
+.wall { position: relative; height: 100svh; min-height: 520px; overflow: hidden; pointer-events: none; user-select: none; -webkit-user-select: none; }
+.wall__in { position: absolute; inset: -22% -12%; display: flex; flex-direction: column; justify-content: center; gap: 14px; transform: rotate(-9deg) translateY(var(--py, 0px)); animation: wallIn 1.6s var(--ease) 2.2s backwards; }
+.trk { display: flex; gap: 14px; width: max-content; animation: mq3 110s linear infinite; }
+.trk.t2 { animation-direction: reverse; animation-duration: 90s; }
+.trk.t3 { animation-duration: 90s; margin-left: -160px; }
+.c { height: clamp(190px, 31vh, 330px); aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; background: #1B1B1B; flex: none; }
+.c img { width: 100%; height: 100%; object-fit: cover; }
+.wall::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.82), rgba(0,0,0,0) 28%, rgba(0,0,0,0) 70%, #000); }
+.wall__cap { position: absolute; z-index: 2; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); bottom: 22px; display: flex; justify-content: space-between; gap: 12px; animation: up 1s var(--ease) 3s backwards; }
+@keyframes mq { to { transform: translateX(-50%); } }
+@keyframes mq3 { to { transform: translateX(-33.3333%); } }
+@keyframes wallIn { from { opacity: 0; scale: 1.25; } }
+@keyframes up { from { opacity: 0; transform: translateY(20px); } }
+
+/* ---------- pick list ---------- */
+.pick { padding-block: clamp(56px, 9vw, 120px) clamp(70px, 10vw, 140px); }
+.pick__lbl { display: flex; justify-content: space-between; color: var(--g1); margin-bottom: 8px; }
+.rw { display: flex; align-items: center; gap: clamp(12px, 2vw, 28px); width: 100%; background: none; border: 0; border-top: 1px solid #2E2E2E; cursor: pointer; color: var(--dim); text-align: left; padding: clamp(28px, 5vw, 64px) 6px; transition: color .6s var(--ease); }
+.rw:last-of-type { border-bottom: 1px solid #2E2E2E; }
+.rw:nth-of-type(2) { justify-content: center; }
+.rw:nth-of-type(3) { justify-content: flex-end; }
+.rw .n { font: 500 clamp(14px, 1.6vw, 20px)/1 var(--f); letter-spacing: 0; }
+.rw .t { font: 300 clamp(44px, 9.4vw, 136px)/1.05 var(--f); letter-spacing: -.035em; }
+.rw .t em { font-size: 1.06em; letter-spacing: -.01em; background: linear-gradient(currentColor, currentColor) 0 100% / 0% 3px no-repeat; transition: background-size .7s var(--ease); padding-bottom: .04em; }
+@media (hover: hover) { .rw:hover, .rw:focus-visible { color: var(--paper); } .rw:hover .t em, .rw:focus-visible .t em { background-size: 100% 3px; } }
+.rw:active { color: var(--paper); }
+.rw:active .t em { background-size: 100% 3px; }
+
+/* ---------- category view ---------- */
+.vw { position: fixed; inset: 0; z-index: 200; background: var(--paper); color: var(--ink); color-scheme: light; overflow-y: auto; visibility: hidden; overscroll-behavior: contain; }
+.vw.show { visibility: visible; }
+.vw .in { padding-block: 84px clamp(56px, 8vw, 110px); }
+.vw__top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.vw__x { cursor: pointer; border: 1.5px solid var(--ink); background: transparent; border-radius: 99px; padding: 12px 20px; font: 600 14px/1 var(--f); letter-spacing: .06em; transition: background .3s, color .3s; }
+.vw__x:hover { background: var(--ink); color: var(--paper); }
+.vw__h { margin: clamp(28px, 6vw, 70px) 0 0; font: 800 clamp(48px, 12vw, 176px)/.98 var(--d); letter-spacing: -.04em; }
+.vw__h .l { display: inline-block; overflow: hidden; padding-bottom: .1em; margin-bottom: -.1em; vertical-align: top; }
+.vw__h .l > span { display: inline-block; transform: translateY(110%); transition: transform 1s var(--ease); }
+.vw__h em { font-size: 1.04em; letter-spacing: -.01em; }
+.vw.open .vw__h .l > span { transform: none; }
+.vw.open .vw__h .l:nth-child(2) > span { transition-delay: .09s; }
+.vw__d { margin: 18px 0 clamp(28px, 4vw, 48px); max-width: 30em; color: #4A4A4A; font-weight: 300; font-size: clamp(18px, 2vw, 22px); opacity: 0; transform: translateY(16px); transition: opacity .8s var(--ease) .25s, transform .8s var(--ease) .25s; }
+.vw.open .vw__d { opacity: 1; transform: none; }
+.gal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.tile { position: relative; margin: 0; aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; background: var(--g2); min-width: 0; opacity: 0; transform: translateY(40px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.vw.open .tile { opacity: 1; transform: none; }
+.vw.open .tile:nth-child(1) { transition-delay: .3s; } .vw.open .tile:nth-child(2) { transition-delay: .36s; } .vw.open .tile:nth-child(3) { transition-delay: .42s; } .vw.open .tile:nth-child(4) { transition-delay: .48s; } .vw.open .tile:nth-child(n+5) { transition-delay: .54s; }
+.gal.vids { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.sub { margin: clamp(40px, 6vw, 72px) 0 14px; color: var(--g1); }
+.vtl { aspect-ratio: 3 / 4; cursor: pointer; background: #000; }
+.vtl video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tile.story { grid-column: 1 / -1; justify-self: center; width: min(100%, 520px); aspect-ratio: 900 / 1688; }
+.tile.wide { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+.tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+@media (hover: hover) { .tile:hover img { transform: scale(1.045); } }
+.lab { position: absolute; left: 10px; bottom: 10px; padding: 8px 13px; border-radius: 99px; background: rgba(255, 255, 255, .9); color: #000; font: 600 13px/1 var(--f); pointer-events: none; }
+@media (hover: hover) { .tile .lab { opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .5s var(--ease); } .tile:hover .lab { opacity: 1; transform: none; } }
+
+/* ---------- project ---------- */
+.proj { padding-block: clamp(72px, 10vw, 130px); }
+.pj { display: grid; gap: 28px 48px; padding-block: clamp(40px, 6vw, 80px); border-bottom: 1px solid #2E2E2E; }
+.pj:last-child { border-bottom: 0; padding-bottom: 0; }
+.pjbtn { margin-top: 28px; cursor: pointer; }
+.proj h2 { margin: 10px 0 0; font: 800 clamp(44px, 8vw, 120px)/.98 var(--d); letter-spacing: -.035em; }
+.proj h2 em { font-size: 1.05em; letter-spacing: 0; }
+.proj p { margin: 0; color: #C9C9C9; font-size: clamp(18px, 2vw, 22px); font-weight: 300; max-width: 30em; }
+.tags { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.tags li { border: 1.5px solid #444; border-radius: 99px; padding: 10px 16px; font: 500 15px/1 var(--f); }
+@media (min-width: 860px) { .pj { grid-template-columns: 1.1fr 1fr; align-items: end; } }
+
+
+/* ---------- pinned project stage ---------- */
+.stage { position: relative; height: calc((var(--n) + 1) * 100svh); background: #fff; color: var(--ink); color-scheme: light; }
+.stage__in { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); max-width: 1400px; margin-inline: auto; padding: 84px max(16px, env(safe-area-inset-right, 0px)) 28px max(16px, env(safe-area-inset-left, 0px)); }
+.cards { --ch: min(calc(100svh - 112px), 55vw); position: relative; height: var(--ch); width: calc(var(--ch) * .8); aspect-ratio: 4 / 5; }
+.card { all: unset; box-sizing: border-box; position: absolute; inset: 0; border-radius: 14px; overflow: hidden; cursor: pointer; background: #E6E6E6; clip-path: inset(100% 0 0 0); transition: clip-path 1.1s var(--ease); pointer-events: none; }
+.card.on { clip-path: inset(0); pointer-events: auto; }
+.card:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.card img { width: 100%; height: 100%; object-fit: contain; background: #E6E6E6; transform: scale(1.18); transition: transform 1.4s var(--ease); }
+.card.on img { transform: none; }
+.side { display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+.side__top { display: flex; justify-content: space-between; gap: 12px; color: #777; }
+.texts { display: grid; align-content: center; flex: 1; min-height: 0; padding-block: 16px; }
+.pt { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s; min-width: 0; }
+.pt.on { opacity: 1; visibility: visible; transition-delay: .3s, 0s; }
+.pt > * { transform: translateY(26px); transition: transform 1s var(--ease); }
+.pt.on > * { transform: none; }
+.pt.on > :nth-child(2) { transition-delay: .36s; } .pt.on > :nth-child(3) { transition-delay: .42s; } .pt.on > :nth-child(4) { transition-delay: .48s; } .pt.on > :nth-child(5) { transition-delay: .54s; }
+.lgb { all: unset; cursor: pointer; display: inline-block; border-radius: 12px; }
+.lgb:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.lg { width: clamp(72px, 8vw, 104px); height: auto; aspect-ratio: 1; object-fit: contain; display: block; transition: transform .6s var(--ease); }
+@media (hover: hover) { .lgb:hover .lg { transform: scale(1.06) rotate(-3deg); } }
+.pn { margin: 14px 0 0; font: 800 clamp(30px, 4.2vw, 60px)/1.02 var(--d); letter-spacing: -.035em; }
+.pn em { font-size: 1.04em; letter-spacing: -.01em; }
+.pt p { margin: 14px 0 0; max-width: 28em; color: #444; font-weight: 300; font-size: clamp(17px, 1.8vw, 21px); }
+.stage .tags li { border-color: #CFCFCF; }
+.btn--k { margin-top: 22px; cursor: pointer; background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn--k:hover { background: #fff; color: var(--ink); }
+.rail { display: flex; align-items: flex-end; justify-content: flex-start; gap: clamp(24px, 5vw, 72px); height: 19svh; }
+.rn { all: unset; box-sizing: border-box; cursor: pointer; writing-mode: vertical-rl; transform: rotate(180deg); font: 300 clamp(18px, 2vw, 28px)/1 var(--f); letter-spacing: -.01em; color: #BDBDBD; white-space: nowrap; transition: color .6s var(--ease); }
+.rn em { font-size: 1.04em; letter-spacing: 0; }
+.rn:hover, .rn.on { color: var(--ink); }
+.rn:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
+@media (max-width: 859px) {
+  .stage__in { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 14px; padding-top: 76px; }
+  .cards { --ch: min(40svh, calc((100vw - 32px) * 1.25)); }
+  .side__top { display: none; }
+  .texts { align-content: start; padding-block: 0; overflow: hidden; }
+  .lg { width: 52px; }
+  .pn { margin-top: 10px; font-size: clamp(30px, 9vw, 44px); }
+  .pt p { margin-top: 10px; font-size: 16px; }
+  .stage .tags { display: none; }
+  .btn--k { margin-top: 14px; padding: 14px 24px; font-size: 16px; }
+  .rail { height: auto; gap: 6px; flex-wrap: nowrap; align-items: center; }
+  .rn { writing-mode: horizontal-tb; transform: none; border: 1.5px solid #CFCFCF; border-radius: 99px; padding: 9px 12px; font-size: 14px; }
+  .rn.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+}
+@media (min-width: 860px) and (max-height: 760px) { .stage .tags { display: none; } }
+@media (max-height: 760px) and (max-width: 859px) { .pt p { display: none; } }
+
+/* ---------- marquee + contact ---------- */
+.band { overflow: hidden; background: linear-gradient(to bottom, #fff 0, var(--ink) clamp(90px, 17svh, 170px)); color: #fff; padding-block: clamp(90px, 17svh, 170px) 14px; }
+.band__t { display: flex; width: max-content; animation: mq 26s linear infinite; }
+.band__t span { font: 800 clamp(48px, 9vw, 120px)/1.1 var(--d); letter-spacing: .02em; padding-right: .5em; white-space: nowrap; }
+.contact { position: relative; padding-block: clamp(90px, 14vw, 190px) clamp(70px, 9vw, 120px); text-align: center; background: linear-gradient(to bottom, var(--ink) 0, rgba(10,10,10,0) clamp(140px, 30%, 320px)), linear-gradient(to bottom, rgba(10,10,10,0) 55%, var(--ink) 100%), linear-gradient(rgba(0, 0, 0, .78), rgba(0, 0, 0, .78)), url(assets/logo-pattern.jpg) center / cover; }
+.contact h2 { margin: 0 auto; max-width: 11em; font: 800 clamp(40px, 8.6vw, 128px)/1 var(--d); letter-spacing: -.035em; text-wrap: balance; }
+.contact h2 em { font-size: 1.05em; letter-spacing: 0; }
+.contact p { margin: 22px auto 0; max-width: 24em; font-size: clamp(18px, 2vw, 22px); font-weight: 300; color: #D6D6D6; }
+.cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+.btn { display: inline-flex; align-items: center; padding: 17px 30px; border-radius: 99px; font: 600 17px/1 var(--f); text-decoration: none; border: 1.5px solid #fff; transition: transform .5s var(--ease), background .3s, color .3s; }
+.btn:hover { transform: scale(1.05); }
+.btn--w { background: #fff; color: #000; }
+.btn--o { color: #fff; }
+.btn--o:hover { background: #fff; color: #000; }
+.me { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 40px; color: #BDBDBD; font-size: 15px; flex-wrap: wrap; }
+.me img { width: 52px; height: auto; }
+footer { background: var(--ink); width: 100%; max-width: none; margin: 0; padding: 28px clamp(20px, 3vw, 44px) 34px; color: var(--g1); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; }
+
+@supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
+  .rv { animation: rv linear both; animation-timeline: view(); animation-range: entry 0% entry 45%; }
+} }
+@keyframes rv { from { opacity: .2; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .hook { display: none; }
+  *, *::before, *::after { animation: none !important; transition-duration: 0s !important; scroll-behavior: auto !important; }
+  .vw .tile, .vw__d { opacity: 1 !important; transform: none !important; }
+  .vw__h .l > span { transform: none !important; }
+}
+@media (max-width: 640px) { .rw { padding-inline: 0; } .lab { font-size: 12px; padding: 7px 10px; } }
+</style>
+
+<!-- opening: logo appears, then leaves -->
+<div class="hook" id="hook" aria-hidden="true">
+  <div class="hook__w stripe" data-t="AIVORY"><span>AIVORY</span></div>
+</div>
+
+<header class="nav" id="nav">
+  <div class="in">
+    <a class="logo" href="#top" aria-label="AIVORY, ke atas" data-close>AIVORY</a>
+    <nav class="links" aria-label="Menu utama">
+      <a href="#karya" data-close>Portfolio</a>
+      <a href="#proyek" data-close>Proyek</a>
+      <a href="#kontak" data-close>Kontak</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- design wall: only passes by, not clickable -->
+  <section class="wall" aria-hidden="true">
+    <div class="wall__in" id="wallin"><div class="trk t1" aria-hidden="true"><div class="c"><img src="assets/pink-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-17.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aquaproof.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-kahf.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-cod.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/senggol.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pink-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-17.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aquaproof.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-kahf.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-cod.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/senggol.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pink-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-17.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aquaproof.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-kahf.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-cod.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/senggol.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div></div><div class="trk t2" aria-hidden="true"><div class="c"><img src="assets/promo.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/nodrop.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-abaya.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ba2-after.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/gebyar.jpg" alt="" width="360" height="450" decoding="async" style="object-position:50% 48%" loading="lazy"></div><div class="c"><img src="assets/promo.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/nodrop.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-abaya.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ba2-after.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/gebyar.jpg" alt="" width="360" height="450" decoding="async" style="object-position:50% 48%" loading="lazy"></div><div class="c"><img src="assets/promo.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/nodrop.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-abaya.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ba2-after.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/gebyar.jpg" alt="" width="360" height="450" decoding="async" style="object-position:50% 48%" loading="lazy"></div></div><div class="trk t3" aria-hidden="true"><div class="c"><img src="assets/feedB-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pillar-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aplus.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-azzura.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/rings-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pillar-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aplus.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-azzura.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/rings-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pillar-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aplus.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-azzura.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/rings-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div></div></div>
+    <div class="wall__cap mono"><span>[ Portfolio ]</span><span>AIVORY &middot; Graphic designer</span></div>
+  </section>
+
+  <!-- pick list -->
+  <section class="pick in" id="karya">
+    <div class="pick__lbl mono"><span>[ Pilih untuk melihat karya ]</span><span>4</span></div>
+    <button class="rw" type="button" data-open="foto" aria-haspopup="dialog"><span class="n">(01)</span><span class="t">Foto <em>produk</em></span></button>
+    <button class="rw" type="button" data-open="desain" aria-haspopup="dialog"><span class="n">(02)</span><span class="t">Desain <em>sosmed</em></span></button>
+    <button class="rw" type="button" data-open="feed" aria-haspopup="dialog"><span class="n">(03)</span><span class="t">Feed <em>Instagram</em></span></button>
+    <button class="rw" type="button" data-open="video" aria-haspopup="dialog"><span class="n">(04)</span><span class="t">Video <em>ads</em></span></button>
+  </section>
+
+  <!-- project -->
+  <section class="stage" id="proyek" style="--n:3" aria-label="Proyek">
+    <div class="stage__in">
+      <div class="cards">
+        <button class="card on" type="button" data-i="0" data-open="garuda" aria-haspopup="dialog" aria-label="Lihat desain Garuda Gold"><img src="assets/pink-model.jpg" alt="Foto model memakai cincin kupu-kupu untuk Garuda Gold" width="900" height="1125" loading="lazy" decoding="async"></button>
+        <button class="card" type="button" data-i="1" data-open="dbts" aria-haspopup="dialog" aria-label="Lihat desain Depo Bangunan Tunggak Semi" tabindex="-1"><img src="assets/aquaproof.jpg" alt="Poster Aquaproof untuk Depo Bangunan Tunggak Semi" width="900" height="1125" loading="lazy" decoding="async"></button>
+        <button class="card" type="button" data-i="2" data-open="ratu" aria-haspopup="dialog" aria-label="Lihat desain Ratu Fashion dan Kosmetik" tabindex="-1"><img src="assets/ratu-glad.jpg" alt="Poster Glad2Glow lip balm untuk Ratu Fashion dan Kosmetik" width="900" height="1125" loading="lazy" decoding="async"></button>
+      </div>
+      <div class="side">
+        <div class="side__top mono"><span>[ Proyek ]</span><span id="stcount">(01 / 03)</span></div>
+        <div class="texts">
+          <div class="pt on" data-i="0">
+            <button class="lgb" type="button" data-open="garuda" aria-haspopup="dialog" aria-label="Lihat desain Garuda Gold"><img class="lg" src="assets/logo-garuda.png" alt="Logo Garuda Gold" width="520" height="520" loading="lazy" decoding="async"></button>
+            <h2 class="pn">Garuda <em>Gold</em></h2>
+            <p>Toko emas dengan model perhiasan terlengkap, dari kadar 6K sampai 24K. Aku membuat konten visual untuk akun Instagramnya, selaras dengan kampanye tim marketing.</p>
+            <ul class="tags"><li>Content maker</li><li>Foto produk</li><li>Desain feed</li></ul>
+            <button class="btn btn--k" type="button" data-open="garuda" aria-haspopup="dialog">Lihat desain &rarr;</button>
+          </div>
+          <div class="pt" data-i="1">
+            <button class="lgb" type="button" data-open="dbts" aria-haspopup="dialog" aria-label="Lihat desain Depo Bangunan Tunggak Semi" tabindex="-1"><img class="lg" src="assets/logo-dbts.png" alt="Logo Depo Bangunan Tunggak Semi" width="520" height="520" loading="lazy" decoding="async"></button>
+            <h2 class="pn">Depo Bangunan<br><em>Tunggak Semi</em></h2>
+            <p>Toko bangunan dengan layanan pesan hari ini antar hari ini. Aku mengerjakan poster promo dan poster produk untuk media sosialnya.</p>
+            <ul class="tags"><li>Desain sosmed</li><li>Poster promo</li><li>Poster produk</li></ul>
+            <button class="btn btn--k" type="button" data-open="dbts" aria-haspopup="dialog" tabindex="-1">Lihat desain &rarr;</button>
+          </div>
+          <div class="pt" data-i="2">
+            <button class="lgb" type="button" data-open="ratu" aria-haspopup="dialog" aria-label="Lihat desain Ratu Fashion dan Kosmetik" tabindex="-1"><img class="lg" src="assets/logo-ratu.png" alt="Logo Ratu Fashion dan Kosmetik" width="500" height="500" loading="lazy" decoding="async"></button>
+            <h2 class="pn">Ratu<br><em>Fashion &amp; Kosmetik</em></h2>
+            <p>Toko fashion dan kosmetik dengan harga murah dan produk lengkap. Aku mengerjakan poster promo produk untuk media sosialnya.</p>
+            <ul class="tags"><li>Desain sosmed</li><li>Poster promo</li><li>Poster produk</li></ul>
+            <button class="btn btn--k" type="button" data-open="ratu" aria-haspopup="dialog" tabindex="-1">Lihat desain &rarr;</button>
+          </div>
+        </div>
+        <div class="rail" role="group" aria-label="Pilih proyek">
+          <button class="rn on" type="button" aria-current="true" data-i="0">Garuda <em>Gold</em></button>
+          <button class="rn" type="button" aria-current="false" data-i="1">Tunggak <em>Semi</em></button>
+          <button class="rn" type="button" aria-current="false" data-i="2">Ratu <em>Fashion</em></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="band" aria-hidden="true">
+    <div class="band__t stripe"><span>AIVORY AIVORY AIVORY AIVORY</span><span>AIVORY AIVORY AIVORY AIVORY</span></div>
+  </div>
+
+  <section class="contact" id="kontak">
+    <div class="in">
+      <p class="mono" style="color:#BDBDBD;margin:0 0 26px">[ Kontak ]</p>
+      <h2>Ceritakan kebutuhan <em>brand-mu.</em></h2>
+      <p>Kirim pesan dan dapatkan konsep awal yang disesuaikan dengan kebutuhan brand.</p>
+      <div class="cta">
+                <a class="btn btn--w" href="https://wa.me/6282219458580?text=Halo%20AIVORY%2C%20aku%20mau%20tanya%20soal%20desain" target="_blank" rel="noopener">Chat WhatsApp</a>
+        <a class="btn btn--o" href="https://www.instagram.com/aivory.labs/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+      <div class="me"><img src="assets/logo-a.png" alt="Logo AIVORY" width="400" height="400" loading="lazy" decoding="async"><span>AIVORY &middot; WA +62 822-1945-8580 &middot; IG @aivory.labs</span></div>
+    </div>
+  </section>
+</main>
+
+<footer><span>&copy; 2026 AIVORY</span></footer>
+
+<section class="vw" id="vw-foto" role="dialog" aria-modal="true" aria-label="Foto produk" aria-hidden="true">
+  <div class="in">
+    <div class="vw__top"><button class="vw__x" type="button" data-back>&larr; Kembali</button><span class="mono">(01) &middot; 4 karya</span></div>
+    <h2 class="vw__h"><span class="l"><span>Foto</span></span> <span class="l"><span><em>produk</em></span></span></h2>
+    <p class="vw__d">Foto produk jadi foto dipakai model, supaya orang bisa membayangkan memakainya.</p>
+    <div class="gal"><figure class="tile"><img src="assets/pink-model.jpg" alt="Model tersenyum di antara bunga sakura memakai dua cincin kupu-kupu" width="1080" height="1350" loading="lazy" decoding="async"><figcaption class="lab">Cincin kupu-kupu</figcaption></figure><figure class="tile"><img src="assets/rings-model.jpg" alt="Tiga cincin dipakai model di jari tangannya" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Cincin di model</figcaption></figure><figure class="tile"><img src="assets/ba2-after.jpg" alt="Gelang motif daun dipakai di tangan model di antara bunga biru" width="1000" height="1250" loading="lazy" decoding="async"><figcaption class="lab">Gelang motif daun</figcaption></figure><figure class="tile"><img src="assets/pillar-model.jpg" alt="Model memakai gelang emas di depan rak buku" width="648" height="810" loading="lazy" decoding="async"><figcaption class="lab">Product on model</figcaption></figure></div>
+  </div>
+</section><section class="vw" id="vw-desain" role="dialog" aria-modal="true" aria-label="Desain sosmed" aria-hidden="true">
+  <div class="in">
+    <div class="vw__top"><button class="vw__x" type="button" data-back>&larr; Kembali</button><span class="mono">(02) &middot; 19 karya</span></div>
+    <h2 class="vw__h"><span class="l"><span>Desain</span></span> <span class="l"><span><em>sosmed</em></span></span></h2>
+    <p class="vw__d">Poster promo dan konten edukasi dengan satu gaya visual yang konsisten.</p>
+    <div class="gal"><figure class="tile"><img src="assets/poster-17.jpg" alt="Poster Dirgahayu Republik Indonesia dengan perhiasan menggantung pita merah" width="1080" height="1350" loading="lazy" decoding="async"><figcaption class="lab">Poster 17 Agustus</figcaption></figure><figure class="tile"><img src="assets/poster-cod.jpg" alt="Poster COD aja dengan model memegang ponsel dan empat produk perhiasan" width="1080" height="1350" loading="lazy" decoding="async"><figcaption class="lab">Poster COD</figcaption></figure><figure class="tile"><img src="assets/promo.jpg" alt="Poster promo cashback Garuda Gold" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Poster promo</figcaption></figure><figure class="tile"><img src="assets/pillar-info.jpg" alt="Poster edukasi pendaftaran member gratis dengan dua kartu member" width="648" height="810" loading="lazy" decoding="async"><figcaption class="lab">Poster informatif</figcaption></figure><figure class="tile"><img src="assets/feedA-2.jpg" alt="Desain feed model dengan teks melingkar Garuda Gold" width="540" height="675" loading="lazy" decoding="async"><figcaption class="lab">Desain feed</figcaption></figure><figure class="tile"><img src="assets/feedB-2.jpg" alt="Desain feed kolase gelang rantai dan gelang bangkok" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Kolase produk</figcaption></figure><figure class="tile"><img src="assets/aquaproof.jpg" alt="Poster Aquaproof cat pelapis anti bocor dengan tiga ukuran kemasan" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Aquaproof</figcaption></figure><figure class="tile"><img src="assets/aplus.jpg" alt="Poster A Plus Cornice Adhesive dengan headline dinding retak rambut" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">A Plus Adhesive</figcaption></figure><figure class="tile"><img src="assets/senggol.jpg" alt="Poster perlengkapan tukang dengan palu dan bor" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Perlengkapan tukang</figcaption></figure><figure class="tile"><img src="assets/nodrop.jpg" alt="Poster No Drop cat pelapis anti bocor" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">No Drop</figcaption></figure><figure class="tile"><img src="assets/ratu-kaos.jpg" alt="Poster kaos kerah unisex dengan dua model memakai polo merah dan putih" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Kaos unisex</figcaption></figure><figure class="tile"><img src="assets/ratu-kahf.jpg" alt="Poster Kahf antiperspirant deodorant dengan tiga varian" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Kahf deodorant</figcaption></figure><figure class="tile"><img src="assets/ratu-long.jpg" alt="Poster long sleeve stripe premium" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Long sleeve</figcaption></figure><figure class="tile"><img src="assets/ratu-emina.jpg" alt="Poster Emina Lip Mask dengan lima varian" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Emina Lip Mask</figcaption></figure><figure class="tile"><img src="assets/ratu-kebaya.jpg" alt="Poster kebaya bludru kutubaru" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Kebaya bludru</figcaption></figure><figure class="tile"><img src="assets/ratu-azzura.jpg" alt="Poster Azzura loose powder fresh look" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Azzura powder</figcaption></figure><figure class="tile"><img src="assets/ratu-abaya.jpg" alt="Poster abaya hitam dewasa" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Abaya hitam</figcaption></figure><figure class="tile"><img src="assets/ratu-glad.jpg" alt="Poster Glad2Glow glowing tint lip balm" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Glad2Glow</figcaption></figure><figure class="tile story"><img src="assets/gebyar.jpg" alt="Poster Gebyar Undian Berhadiah Depo Bangunan Tunggak Semi" width="900" height="1688" loading="lazy" decoding="async"><figcaption class="lab">Gebyar undian</figcaption></figure></div>
+  </div>
+</section><section class="vw" id="vw-feed" role="dialog" aria-modal="true" aria-label="Feed Instagram" aria-hidden="true">
+  <div class="in">
+    <div class="vw__top"><button class="vw__x" type="button" data-back>&larr; Kembali</button><span class="mono">(03) &middot; 6 karya</span></div>
+    <h2 class="vw__h"><span class="l"><span>Feed</span></span> <span class="l"><span><em>Instagram</em></span></span></h2>
+    <p class="vw__d">Tampilan akun dan postingan feed yang rapi dan seragam.</p>
+    <div class="gal"><figure class="tile wide"><img src="assets/slide-gold.jpg" alt="Tampilan Instagram Garuda Gold dengan grid feed bernuansa krem" width="1600" height="900" loading="lazy" decoding="async"><figcaption class="lab">Feed Instagram</figcaption></figure><figure class="tile wide"><img src="assets/slide-red.jpg" alt="Tampilan Instagram Garuda Gold dengan grid feed merah putih" width="1600" height="900" loading="lazy" decoding="async"><figcaption class="lab">Tema merah putih</figcaption></figure><figure class="tile"><img src="assets/feedA-1.jpg" alt="Desain feed close-up wajah model dengan anting bunga" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Anting bunga</figcaption></figure><figure class="tile"><img src="assets/feedA-3.jpg" alt="Desain feed model memakai kalung emas" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Kalung emas</figcaption></figure><figure class="tile"><img src="assets/feedB-1.jpg" alt="Desain feed model memakai cincin dengan latar merah putih" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Cincin merah putih</figcaption></figure><figure class="tile"><img src="assets/feedB-3.jpg" alt="Desain feed model dengan tangan di dagu memakai cincin" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Cincin di model</figcaption></figure></div>
+  </div>
+</section><section class="vw" id="vw-video" role="dialog" aria-modal="true" aria-label="Video ads" aria-hidden="true">
+  <div class="in">
+    <div class="vw__top"><button class="vw__x" type="button" data-back>&larr; Kembali</button><span class="mono">(04) &middot; 3 karya</span></div>
+    <h2 class="vw__h"><span class="l"><span>Video</span></span> <span class="l"><span><em>ads</em></span></span></h2>
+    <p class="vw__d">Video vertikal pendek untuk TikTok, Reels, dan Shorts.</p>
+    <div class="gal vids"><figure class="tile vtl"><video src="assets/v1.mp4" poster="assets/v1-poster.jpg" muted loop playsinline preload="metadata" aria-label="Product on model"></video></figure><figure class="tile vtl"><video src="assets/v2.mp4" poster="assets/v2-poster.jpg" muted loop playsinline preload="metadata" aria-label="Iklan perhiasan"></video></figure><figure class="tile vtl"><video src="assets/v3.mp4" poster="assets/v3-poster.jpg" muted loop playsinline preload="metadata" aria-label="Koleksi cincin"></video></figure></div>
+  </div>
+</section><section class="vw" id="vw-garuda" role="dialog" aria-modal="true" aria-label="Desain Garuda Gold" aria-hidden="true">
+  <div class="in">
+    <div class="vw__top"><button class="vw__x" type="button" data-back>&larr; Kembali</button><span class="mono">[Proyek] &middot; 19 karya</span></div>
+    <h2 class="vw__h"><span class="l"><span>Garuda</span></span> <span class="l"><span><em>Gold</em></span></span></h2>
+    <p class="vw__d">Poster, foto produk di model, feed Instagram, dan video ads yang dikerjakan untuk Garuda Gold.</p>
+    <div class="gal"><figure class="tile"><img src="assets/poster-17.jpg" alt="Poster Dirgahayu Republik Indonesia dengan perhiasan menggantung pita merah" width="1080" height="1350" loading="lazy" decoding="async"><figcaption class="lab">Poster 17 Agustus</figcaption></figure><figure class="tile"><img src="assets/pink-model.jpg" alt="Model tersenyum di antara bunga sakura memakai dua cincin kupu-kupu" width="1080" height="1350" loading="lazy" decoding="async"><figcaption class="lab">Cincin kupu-kupu</figcaption></figure><figure class="tile"><img src="assets/poster-cod.jpg" alt="Poster COD aja dengan model memegang ponsel dan empat produk perhiasan" width="1080" height="1350" loading="lazy" decoding="async"><figcaption class="lab">Poster COD</figcaption></figure><figure class="tile"><img src="assets/rings-model.jpg" alt="Tiga cincin dipakai model di jari tangannya" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Cincin di model</figcaption></figure><figure class="tile"><img src="assets/promo.jpg" alt="Poster promo cashback Garuda Gold" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Poster promo</figcaption></figure><figure class="tile"><img src="assets/feedA-2.jpg" alt="Desain feed model dengan teks melingkar Garuda Gold" width="540" height="675" loading="lazy" decoding="async"><figcaption class="lab">Desain feed</figcaption></figure><figure class="tile"><img src="assets/pillar-model.jpg" alt="Model memakai gelang emas di depan rak buku" width="648" height="810" loading="lazy" decoding="async"><figcaption class="lab">Product on model</figcaption></figure><figure class="tile"><img src="assets/ba2-after.jpg" alt="Gelang motif daun dipakai di tangan model di antara bunga biru" width="1000" height="1250" loading="lazy" decoding="async"><figcaption class="lab">Gelang motif daun</figcaption></figure><figure class="tile"><img src="assets/pillar-info.jpg" alt="Poster edukasi pendaftaran member gratis dengan dua kartu member" width="648" height="810" loading="lazy" decoding="async"><figcaption class="lab">Poster informatif</figcaption></figure><figure class="tile"><img src="assets/feedA-1.jpg" alt="Desain feed close-up wajah model dengan anting bunga" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Anting bunga</figcaption></figure><figure class="tile"><img src="assets/feedB-1.jpg" alt="Desain feed model memakai cincin dengan latar merah putih" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Cincin merah putih</figcaption></figure><figure class="tile"><img src="assets/feedA-3.jpg" alt="Desain feed model memakai kalung emas" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Kalung emas</figcaption></figure><figure class="tile"><img src="assets/feedB-3.jpg" alt="Desain feed model dengan tangan di dagu memakai cincin" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Cincin di model</figcaption></figure><figure class="tile"><img src="assets/feedB-2.jpg" alt="Desain feed kolase gelang rantai dan gelang bangkok" width="432" height="540" loading="lazy" decoding="async"><figcaption class="lab">Kolase produk</figcaption></figure><figure class="tile wide"><img src="assets/slide-gold.jpg" alt="Tampilan Instagram Garuda Gold dengan grid feed bernuansa krem" width="1600" height="900" loading="lazy" decoding="async"><figcaption class="lab">Feed Instagram</figcaption></figure><figure class="tile wide"><img src="assets/slide-red.jpg" alt="Tampilan Instagram Garuda Gold dengan grid feed merah putih" width="1600" height="900" loading="lazy" decoding="async"><figcaption class="lab">Tema merah putih</figcaption></figure></div><p class="sub mono">Video ads</p><div class="gal vids"><figure class="tile vtl"><video src="assets/v1.mp4" poster="assets/v1-poster.jpg" muted loop playsinline preload="metadata" aria-label="Product on model"></video></figure><figure class="tile vtl"><video src="assets/v2.mp4" poster="assets/v2-poster.jpg" muted loop playsinline preload="metadata" aria-label="Iklan perhiasan"></video></figure><figure class="tile vtl"><video src="assets/v3.mp4" poster="assets/v3-poster.jpg" muted loop playsinline preload="metadata" aria-label="Koleksi cincin"></video></figure></div>
+  </div>
+</section><section class="vw" id="vw-dbts" role="dialog" aria-modal="true" aria-label="Desain Depo Bangunan Tunggak Semi" aria-hidden="true">
+  <div class="in">
+    <div class="vw__top"><button class="vw__x" type="button" data-back>&larr; Kembali</button><span class="mono">[Proyek] &middot; 5 karya</span></div>
+    <h2 class="vw__h"><span class="l"><span>Tunggak</span></span> <span class="l"><span><em>Semi</em></span></span></h2>
+    <p class="vw__d">Poster promo dan produk yang dikerjakan untuk Depo Bangunan Tunggak Semi.</p>
+    <div class="gal"><figure class="tile"><img src="assets/aquaproof.jpg" alt="Poster Aquaproof cat pelapis anti bocor dengan tiga ukuran kemasan" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Aquaproof</figcaption></figure><figure class="tile"><img src="assets/nodrop.jpg" alt="Poster No Drop cat pelapis anti bocor" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">No Drop</figcaption></figure><figure class="tile"><img src="assets/aplus.jpg" alt="Poster A Plus Cornice Adhesive dengan headline dinding retak rambut" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">A Plus Adhesive</figcaption></figure><figure class="tile"><img src="assets/senggol.jpg" alt="Poster perlengkapan tukang dengan palu dan bor" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Perlengkapan tukang</figcaption></figure><figure class="tile story"><img src="assets/gebyar.jpg" alt="Poster Gebyar Undian Berhadiah Depo Bangunan Tunggak Semi" width="900" height="1688" loading="lazy" decoding="async"><figcaption class="lab">Gebyar undian</figcaption></figure></div>
+  </div>
+</section><section class="vw" id="vw-ratu" role="dialog" aria-modal="true" aria-label="Desain Ratu Fashion dan Kosmetik" aria-hidden="true">
+  <div class="in">
+    <div class="vw__top"><button class="vw__x" type="button" data-back>&larr; Kembali</button><span class="mono">[Proyek] &middot; 8 karya</span></div>
+    <h2 class="vw__h"><span class="l"><span>Ratu</span></span> <span class="l"><span><em>Fashion</em></span></span></h2>
+    <p class="vw__d">Poster promo produk fashion dan kosmetik yang dikerjakan untuk Ratu Fashion &amp; Kosmetik.</p>
+    <div class="gal"><figure class="tile"><img src="assets/ratu-kaos.jpg" alt="Poster kaos kerah unisex dengan dua model memakai polo merah dan putih" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Kaos unisex</figcaption></figure><figure class="tile"><img src="assets/ratu-kahf.jpg" alt="Poster Kahf antiperspirant deodorant dengan tiga varian" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Kahf deodorant</figcaption></figure><figure class="tile"><img src="assets/ratu-long.jpg" alt="Poster long sleeve stripe premium" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Long sleeve</figcaption></figure><figure class="tile"><img src="assets/ratu-emina.jpg" alt="Poster Emina Lip Mask dengan lima varian" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Emina Lip Mask</figcaption></figure><figure class="tile"><img src="assets/ratu-kebaya.jpg" alt="Poster kebaya bludru kutubaru" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Kebaya bludru</figcaption></figure><figure class="tile"><img src="assets/ratu-azzura.jpg" alt="Poster Azzura loose powder fresh look" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Azzura powder</figcaption></figure><figure class="tile"><img src="assets/ratu-abaya.jpg" alt="Poster abaya hitam dewasa" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Abaya hitam</figcaption></figure><figure class="tile"><img src="assets/ratu-glad.jpg" alt="Poster Glad2Glow glowing tint lip balm" width="900" height="1125" loading="lazy" decoding="async"><figcaption class="lab">Glad2Glow</figcaption></figure></div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var body = document.body;
+  var hook = document.getElementById('hook');
+  if (hook) setTimeout(function () { hook.remove(); }, 3500);
+
+  // wall parallax
+  var wall = document.getElementById('wallin');
+  var tick = false;
+  function par() { tick = false; if (wall) wall.style.setProperty('--py', Math.min(window.pageYOffset, 1200) * -0.18 + 'px'); }
+  window.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(par); } }, { passive: true });
+
+
+  // pinned project stage: scrolling steps through the companies
+  var stage = document.getElementById('proyek');
+  if (stage) {
+    var N = stage.querySelectorAll('.card').length;
+    var cards = stage.querySelectorAll('.card'), pts = stage.querySelectorAll('.pt'), rns = stage.querySelectorAll('.rn');
+    var cnt = document.getElementById('stcount'), cur = -1, sTick = false;
+    function setStage(i) {
+      if (i === cur) return;
+      cur = i;
+      cards.forEach(function (c, k) { c.classList.toggle('on', k <= i); c.tabIndex = k === i ? 0 : -1; });
+      pts.forEach(function (p, k) {
+        p.classList.toggle('on', k === i);
+        p.querySelectorAll('button').forEach(function (b) { b.tabIndex = k === i ? 0 : -1; });
+      });
+      rns.forEach(function (r, k) { r.classList.toggle('on', k === i); r.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+      if (cnt) cnt.textContent = '(0' + (i + 1) + ' / 0' + N + ')';
+    }
+    function stageScroll() {
+      sTick = false;
+      var r = stage.getBoundingClientRect();
+      var total = stage.offsetHeight - window.innerHeight;
+      var p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+      setStage(Math.min(N - 1, Math.floor(p * N)));
+    }
+    window.addEventListener('scroll', function () { if (!sTick) { sTick = true; requestAnimationFrame(stageScroll); } }, { passive: true });
+    window.addEventListener('resize', stageScroll);
+    stageScroll();
+    rns.forEach(function (r) {
+      r.addEventListener('click', function () {
+        var i = Number(r.dataset.i);
+        var total = stage.offsetHeight - window.innerHeight;
+        var top = stage.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({ top: top + ((i + 0.5) / N) * total, behavior: 'smooth' });
+      });
+    });
+  }
+
+  // category view that grows out of the clicked row
+  var openView = null, lastRow = null, closeTimer = null;
+  function rowClip(r) {
+    return 'inset(' + r.top + 'px ' + (window.innerWidth - r.right) + 'px ' + (window.innerHeight - r.bottom) + 'px ' + r.left + 'px round 14px)';
+  }
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // videos play only while they are on screen inside the open view
+  var vis = new WeakMap(), held = new WeakSet();
+  function sync(m) {
+    var inView = openView && openView.contains(m) && vis.get(m);
+    if (inView && !held.has(m)) { if (reduce) { m.controls = true; } else { var p = m.play(); if (p && p.catch) p.catch(function () {}); } }
+    else m.pause();
+  }
+  function playAll(v, on) {
+    v.querySelectorAll('video').forEach(function (m) { if (on) sync(m); else m.pause(); });
+  }
+  if ('IntersectionObserver' in window) {
+    document.querySelectorAll('.vw').forEach(function (v) {
+      var vids = v.querySelectorAll('video');
+      if (!vids.length) return;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          vis.set(e.target, e.isIntersecting);
+          if (e.isIntersecting) held.delete(e.target);
+          sync(e.target);
+        });
+      }, { root: v, threshold: 0.5 });
+      vids.forEach(function (m) { io.observe(m); });
+    });
+  } else {
+    document.querySelectorAll('video').forEach(function (m) { vis.set(m, true); });
+  }
+  document.querySelectorAll('.vtl').forEach(function (f) {
+    f.addEventListener('click', function () {
+      var m = f.querySelector('video');
+      if (m.paused) { held.delete(m); m.play(); } else { held.add(m); m.pause(); }
+    });
+  });
+  function open(id, row) {
+    var v = document.getElementById('vw-' + id);
+    if (!v) return;
+    clearTimeout(closeTimer);
+    lastRow = row; openView = v;
+    var r = row.getBoundingClientRect();
+    v.style.transition = 'none';
+    v.style.clipPath = rowClip(r);
+    v.classList.add('show');
+    v.scrollTop = 0;
+    void v.offsetWidth;
+    v.style.transition = 'clip-path 1s cubic-bezier(.76,0,.24,1)';
+    v.style.clipPath = 'inset(0px 0px 0px 0px round 0px)';
+    body.style.overflow = 'hidden';
+    v.setAttribute('aria-hidden', 'false');
+    setTimeout(function () { v.classList.add('open'); playAll(v, true); }, 450);
+    setTimeout(function () { var b = v.querySelector('[data-back]'); if (b) b.focus({ preventScroll: true }); }, 1000);
+  }
+  function close() {
+    var v = openView;
+    if (!v) return;
+    openView = null;
+    v.classList.remove('open');
+    playAll(v, false);
+    var r = lastRow ? lastRow.getBoundingClientRect() : { top: window.innerHeight / 2, right: window.innerWidth / 2, bottom: window.innerHeight / 2, left: window.innerWidth / 2 };
+    v.style.clipPath = rowClip(r);
+    v.setAttribute('aria-hidden', 'true');
+    body.style.overflow = '';
+    closeTimer = setTimeout(function () { v.classList.remove('show'); }, 1000);
+    if (lastRow) lastRow.focus({ preventScroll: true });
+  }
+  document.querySelectorAll('[data-open]').forEach(function (b) {
+    b.addEventListener('click', function () { open(b.dataset.open, b); });
+  });
+  document.querySelectorAll('[data-back]').forEach(function (b) { b.addEventListener('click', close); });
+
+  // nav links close an open category view before scrolling
+  document.querySelectorAll('[data-close]').forEach(function (a) {
+    a.addEventListener('click', function () { if (openView) close(); });
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openView) close(); });
+})();
+</script>
+
+</html>
