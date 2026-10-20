@@ -2,7 +2,7 @@
 <html lang="id">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AIVORY</title>
+<title>Arif Unggul Katana</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&family=Instrument+Serif:ital@1&family=Syne:wght@600;700;800&display=swap">
@@ -28,13 +28,14 @@ button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 6px; }
 .in { max-width: 1160px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .mono { font: 500 13px/1 var(--f); letter-spacing: .14em; text-transform: uppercase; }
-.stripe { background: repeating-linear-gradient(to bottom, currentColor 0 .085em, transparent .085em .145em); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* stripes take their own colour: the text itself is transparent, so currentColor would be too */
+.stripe { background: repeating-linear-gradient(to bottom, var(--sc, #fff) 0 .085em, transparent .085em .145em); -webkit-background-clip: text; background-clip: text; color: transparent; }
 em { font-family: var(--s); font-style: italic; font-weight: 400; }
 
 /* ---------- opening: logo appears, then leaves ---------- */
 .hook { position: fixed; inset: 0; z-index: 300; background: #000; color: #fff; display: grid; place-items: center; clip-path: inset(0); animation: hookOut 1s var(--ease) 2.3s forwards; }
-.hook__w { position: relative; font: 800 clamp(40px, 13vw, 220px)/1.1 var(--d); letter-spacing: .02em; white-space: nowrap; animation: logoOut .6s var(--ease) 1.9s forwards; }
-.hook__w::after { content: attr(data-t); position: absolute; left: 0; top: 0; color: #fff; clip-path: inset(0 100% 0 0); animation: wipe 1s var(--ease) 1s forwards; }
+.hook__w { position: relative; font: 800 clamp(36px, min(11vw, 24svh), 190px)/1.1 var(--d); letter-spacing: .02em; white-space: pre; text-align: center; animation: logoOut .6s var(--ease) 1.9s forwards; }
+.hook__w::after { content: attr(data-t); position: absolute; inset: 0; white-space: pre; color: #fff; clip-path: inset(0 100% 0 0); animation: wipe 1s var(--ease) 1s forwards; }
 .hook__w > span { display: inline-block; clip-path: inset(0 100% 0 0); animation: wipe 1.1s var(--ease) .25s forwards; }
 .hook__tag { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); bottom: 22px; display: flex; justify-content: space-between; opacity: 0; animation: fadeIn .6s .6s forwards, fadeOut .4s 1.9s forwards; }
 @keyframes hookOut { to { clip-path: inset(0 0 100% 0); visibility: hidden; } }
@@ -47,6 +48,7 @@ em { font-family: var(--s); font-style: italic; font-weight: 400; }
 .nav { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 0; right: 0; z-index: 260; mix-blend-mode: difference; color: #fff; pointer-events: none; }
 .nav .in { max-width: 1400px; display: flex; justify-content: space-between; align-items: center; }
 .logo { pointer-events: auto; font: 800 22px/1 var(--d); letter-spacing: .02em; text-decoration: none; }
+@media (max-width: 520px) { .logo { font-size: 16px; line-height: 1.08; max-width: 9.5em; } }
 
 /* ---------- nav links ---------- */
 .links { pointer-events: auto; display: flex; gap: clamp(18px, 3vw, 40px); }
@@ -189,7 +191,12 @@ em { font-family: var(--s); font-style: italic; font-weight: 400; }
 .band { overflow: hidden; background: linear-gradient(to bottom, #fff 0, var(--ink) clamp(90px, 17svh, 170px)); color: #fff; padding-block: clamp(90px, 17svh, 170px) 14px; }
 .band__t { display: flex; width: max-content; animation: mq 26s linear infinite; }
 .band__t span { font: 800 clamp(48px, 9vw, 120px)/1.1 var(--d); letter-spacing: .02em; padding-right: .5em; white-space: nowrap; }
-.contact { position: relative; padding-block: clamp(90px, 14vw, 190px) clamp(70px, 9vw, 120px); text-align: center; background: linear-gradient(to bottom, var(--ink) 0, rgba(10,10,10,0) clamp(140px, 30%, 320px)), linear-gradient(to bottom, rgba(10,10,10,0) 55%, var(--ink) 100%), linear-gradient(rgba(0, 0, 0, .78), rgba(0, 0, 0, .78)), url(assets/logo-pattern.jpg) center / cover; }
+.contact { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(90px, 14vw, 190px) clamp(70px, 9vw, 120px); text-align: center; background: var(--ink); }
+/* the name repeated in striped type behind the contact, fading to black at the top and bottom */
+.pat { position: absolute; inset: 0; z-index: -2; display: flex; flex-direction: column; justify-content: center; gap: .32em; font: 800 clamp(30px, 4.6vw, 66px)/1 var(--d); letter-spacing: .02em; white-space: nowrap; color: #fff; }
+.pat span { display: block; margin-left: -1.6em; }
+.pat span:nth-child(even) { margin-left: -4.2em; }
+.contact::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to bottom, var(--ink) 0, rgba(10,10,10,0) clamp(140px, 30%, 320px)), linear-gradient(to bottom, rgba(10,10,10,0) 55%, var(--ink) 100%), rgba(0, 0, 0, .78); }
 .contact h2 { margin: 0 auto; max-width: 11em; font: 800 clamp(40px, 8.6vw, 128px)/1 var(--d); letter-spacing: -.035em; text-wrap: balance; }
 .contact h2 em { font-size: 1.05em; letter-spacing: 0; }
 .contact p { margin: 22px auto 0; max-width: 24em; font-size: clamp(18px, 2vw, 22px); font-weight: 300; color: #D6D6D6; }
@@ -218,12 +225,12 @@ footer { background: var(--ink); width: 100%; max-width: none; margin: 0; paddin
 
 <!-- opening: logo appears, then leaves -->
 <div class="hook" id="hook" aria-hidden="true">
-  <div class="hook__w stripe" data-t="AIVORY"><span>AIVORY</span></div>
+  <div class="hook__w stripe" data-t="ARIF&#10;UNGGUL&#10;KATANA"><span>ARIF&#10;UNGGUL&#10;KATANA</span></div>
 </div>
 
 <header class="nav" id="nav">
   <div class="in">
-    <a class="logo" href="#top" aria-label="AIVORY, ke atas" data-close>AIVORY</a>
+    <a class="logo" href="#top" aria-label="Arif Unggul Katana, ke atas" data-close>Arif Unggul Katana</a>
     <nav class="links" aria-label="Menu utama">
       <a href="#karya" data-close>Portfolio</a>
       <a href="#proyek" data-close>Proyek</a>
@@ -237,7 +244,7 @@ footer { background: var(--ink); width: 100%; max-width: none; margin: 0; paddin
   <!-- design wall: only passes by, not clickable -->
   <section class="wall" aria-hidden="true">
     <div class="wall__in" id="wallin"><div class="trk t1" aria-hidden="true"><div class="c"><img src="assets/pink-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-17.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aquaproof.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-kahf.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-cod.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/senggol.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pink-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-17.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aquaproof.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-kahf.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-cod.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/senggol.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pink-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-17.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aquaproof.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-kahf.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/poster-cod.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/senggol.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div></div><div class="trk t2" aria-hidden="true"><div class="c"><img src="assets/promo.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/nodrop.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-abaya.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ba2-after.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/gebyar.jpg" alt="" width="360" height="450" decoding="async" style="object-position:50% 48%" loading="lazy"></div><div class="c"><img src="assets/promo.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/nodrop.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-abaya.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ba2-after.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/gebyar.jpg" alt="" width="360" height="450" decoding="async" style="object-position:50% 48%" loading="lazy"></div><div class="c"><img src="assets/promo.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/nodrop.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-abaya.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ba2-after.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-1.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/gebyar.jpg" alt="" width="360" height="450" decoding="async" style="object-position:50% 48%" loading="lazy"></div></div><div class="trk t3" aria-hidden="true"><div class="c"><img src="assets/feedB-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pillar-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aplus.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-azzura.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/rings-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pillar-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aplus.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-azzura.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/rings-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-2.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/pillar-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/aplus.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/ratu-azzura.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedB-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/rings-model.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div><div class="c"><img src="assets/feedA-3.jpg" alt="" width="360" height="450" decoding="async" loading="lazy"></div></div></div>
-    <div class="wall__cap mono"><span>[ Portfolio ]</span><span>AIVORY &middot; Graphic designer</span></div>
+    <div class="wall__cap mono"><span>[ Portfolio ]</span><span>Arif Unggul Katana &middot; Graphic designer</span></div>
   </section>
 
   <!-- pick list -->
@@ -292,24 +299,25 @@ footer { background: var(--ink); width: 100%; max-width: none; margin: 0; paddin
   </section>
 
   <div class="band" aria-hidden="true">
-    <div class="band__t stripe"><span>AIVORY AIVORY AIVORY AIVORY</span><span>AIVORY AIVORY AIVORY AIVORY</span></div>
+    <div class="band__t stripe"><span>ARIF UNGGUL KATANA &middot; ARIF UNGGUL KATANA &middot; </span><span>ARIF UNGGUL KATANA &middot; ARIF UNGGUL KATANA &middot; </span></div>
   </div>
 
   <section class="contact" id="kontak">
+    <div class="pat" aria-hidden="true"><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span><span class="stripe">ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA ARIF UNGGUL KATANA </span></div>
     <div class="in">
       <p class="mono" style="color:#BDBDBD;margin:0 0 26px">[ Kontak ]</p>
       <h2>Ceritakan kebutuhan <em>brand-mu.</em></h2>
       <p>Kirim pesan dan dapatkan konsep awal yang disesuaikan dengan kebutuhan brand.</p>
       <div class="cta">
-                <a class="btn btn--w" href="https://wa.me/6282219458580?text=Halo%20AIVORY%2C%20aku%20mau%20tanya%20soal%20desain" target="_blank" rel="noopener">Chat WhatsApp</a>
+                <a class="btn btn--w" href="https://wa.me/6282219458580?text=Halo%20Arif%2C%20saya%20ingin%20bertanya%20soal%20desain." target="_blank" rel="noopener">Chat WhatsApp</a>
         <a class="btn btn--o" href="https://www.instagram.com/aivory.labs/" target="_blank" rel="noopener">Instagram</a>
       </div>
-      <div class="me"><img src="assets/logo-a.png" alt="Logo AIVORY" width="400" height="400" loading="lazy" decoding="async"><span>AIVORY &middot; WA +62 822-1945-8580 &middot; IG @aivory.labs</span></div>
+      <div class="me"><img src="assets/logo-a.png" alt="Logo Arif Unggul Katana" width="400" height="400" loading="lazy" decoding="async"><span>Arif Unggul Katana &middot; WA +62 822-1945-8580 &middot; IG @aivory.labs</span></div>
     </div>
   </section>
 </main>
 
-<footer><span>&copy; 2026 AIVORY</span></footer>
+<footer><span>&copy; 2026 Arif Unggul Katana</span></footer>
 
 <section class="vw" id="vw-foto" role="dialog" aria-modal="true" aria-label="Foto produk" aria-hidden="true">
   <div class="in">
